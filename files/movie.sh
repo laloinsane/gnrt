@@ -20,6 +20,7 @@ EOF
 )
   done
   read -p 'Country : ' country
+  read -p 'Director : ' director
   read -p 'Release : ' release
   read -p 'Studio : ' studio
   echo 'Actors : Insert the actors separated by commas (Christian Bale,Rosamund Pike,Wes Studi)'
@@ -47,7 +48,7 @@ EOF
   done
 
   [ ! -z "$description" ] && outline=$(echo $description | cut -d "." -f 1).
-  [ ! -z "$year" ] && year=$(echo $release | cut -d "-" -f 1)
+  [ ! -z "$release" ] && year=$(echo $release | cut -d "-" -f 1)
   [ ! -f "$movie_file" ] && touch "$movie_file"
 
   cat > $movie_file << EOF
@@ -60,6 +61,7 @@ EOF
   <plot>$description</plot>
   <tagline></tagline>$genre_tag
   <country>$country</country>
+  <director>$director</director>
   <premiered>$release</premiered>
   <year>$year</year>
   <studio>$studio</studio>$actor_tag
