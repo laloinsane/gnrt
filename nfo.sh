@@ -13,8 +13,8 @@ while [ -n "$1" ]; do
   case "$1" in
     -m|--movie-file)
       case "$2" in
-        -o|--output) [ -z "$3" ] && echo "Missing destination file name" 1>&2 && exit 1 || main_movie_file $3 ; break ;;
-        -*|*) [ -z "$2" ] && echo "Missing arguments" 1>&2 && exit 1 || echo "Option $2 not recognized" 1>&2 && exit 1 ;;
+        -o|--output) [ -z "$3" ] && echo "Missing destination file name" 1>&2 && exit 1 || main_movie_file "$3" ; break ;;
+        -*|*) [ -z "$2" ] && echo "Missing arguments" 1>&2 && exit 1 || echo "Option \"$2\" not recognized" 1>&2 && exit 1 ;;
       esac ; shift
     ;;
     -p|--poster)
