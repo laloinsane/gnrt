@@ -55,8 +55,7 @@ function create_fanart() {
 function main_fanart() {
   [ ! -f "$1" ] && echo "The input file don't exists" 1>&2 && return 1                  # input file
 
-  png=$(ls $PRODIR/logos | grep -i $3.png)
-  [ ! $? == 0 ] && echo "The input logo don't exists" 1>&2 && return 1                  # input logo
+  [ ! -z "$3" ] && png=$(ls $PRODIR/logos | grep -i $3.png) && [ $? != 0 ] && echo "The input logo don't exists" 1>&2 && return 1                  # input logo
 
   [ ! -z "$4" ] && c=$4 || c="none"                                                     # color of gradient
 

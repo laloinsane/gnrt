@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function create_movie_file() {
-  movie_file=$1
+  movie_file="$1"
   echo 'COMPLETE THE INFORMATION'
   printf '\n'
   read -p 'Title : ' title
@@ -20,6 +20,7 @@ EOF
 )
   done
   read -p 'Country : ' country
+  read -p 'Director : ' director
   read -p 'Release : ' release
   read -p 'Studio : ' studio
   echo 'Actors : Insert the actors separated by commas (Christian Bale,Rosamund Pike,Wes Studi)'
@@ -47,10 +48,10 @@ EOF
   done
 
   [ ! -z "$description" ] && outline=$(echo $description | cut -d "." -f 1).
-  [ ! -z "$year" ] && year=$(echo $release | cut -d "-" -f 1)
+  [ ! -z "$release" ] && year=$(echo $release | cut -d "-" -f 1)
   [ ! -f "$movie_file" ] && touch "$movie_file"
 
-  cat > $movie_file << EOF
+  cat > "$movie_file" << EOF
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
   <title>$title</title>
@@ -60,6 +61,7 @@ EOF
   <plot>$description</plot>
   <tagline></tagline>$genre_tag
   <country>$country</country>
+  <director>$director</director>
   <premiered>$release</premiered>
   <year>$year</year>
   <studio>$studio</studio>$actor_tag
@@ -71,11 +73,11 @@ EOF
 
 function main_movie_file() {
   [ -f "$1" ] && while true; do
-    read -p "The file $1 already exists, Do you want to overwrite it? [Y/N] " answer
+    read -p "The file \"$1\" already exists, Do you want to overwrite it? [Y/N] " answer
     case $answer in
-      [Yy]*) create_movie_file $1 ; break ;;
+      [Yy]*) create_movie_file "$1" ; break ;;
       [Nn]*) exit ;;
       *) echo "Please answer yes or no." ;;
     esac
-  done || create_movie_file $1
+  done || create_movie_file "$1"
 }
