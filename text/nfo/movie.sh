@@ -1,6 +1,17 @@
 #!/bin/bash
 
-function create_movie_file() {
+function generate_movie_nfo() {
+  [ -f "$1" ] && while true; do
+    read -p "The file \"$1\" already exists, Do you want to overwrite it? [Y/N] " answer
+    case $answer in
+      [Yy]*) movie_nfo_manual_version "$1" ; break ;;
+      [Nn]*) exit ;;
+      *) echo "Please answer yes or no." ;;
+    esac
+  done || movie_nfo_manual_version "$1"
+}
+
+function movie_nfo_manual_version() {
   movie_file="$1"
   echo 'COMPLETE THE INFORMATION'
   printf '\n'
@@ -68,16 +79,5 @@ EOF
 </movie>
 EOF
 
-  #[ $? = 0 ] && echo "$movie_file created successfully."
-}
-
-function main_movie_file() {
-  [ -f "$1" ] && while true; do
-    read -p "The file \"$1\" already exists, Do you want to overwrite it? [Y/N] " answer
-    case $answer in
-      [Yy]*) create_movie_file "$1" ; break ;;
-      [Nn]*) exit ;;
-      *) echo "Please answer yes or no." ;;
-    esac
-  done || create_movie_file "$1"
+  [ -s "$movie_file" ] && echo "\"$movie_file\" created successfully." && exit 0 || echo "Error!! occurred during file creation of \"$movie_file\"." 1>&2 && exit 1
 }
