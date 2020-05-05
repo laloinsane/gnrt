@@ -38,7 +38,8 @@ function poster_logo() {
   ch=$(identify $tmp/crop.jpg | cut -d " " -f 3 | cut -d "x" -f 2)                      # image crop height
   lp=$(bc <<< "$cw / 1.043525571")                                                      # logo proportion (1918/1.043525571)
   convert "$PRODIR/logos/$png" -resize $lp'x' $tmp/logo.png
-  poster_color $2
+  [[ "$2" != 1 ]] && convert $tmp/logo.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/logo.png
+  poster_color $3 $4
 }
 
 function poster_color() {
@@ -48,6 +49,7 @@ function poster_color() {
   lh=$(identify $tmp/logo.png | cut -d " " -f 3 | cut -d "x" -f 2)                      # logo height
   gmp=$(bc <<< "$ch / 35.9625")                                                         # gradient margin bottom proportion (2877/35.9625=80)
   convert -size $cw'x'$(($lh + $gmp)) gradient:"none"-$1 $tmp/gradient.png
+  [[ "$2" != 1 ]] && convert $tmp/gradient.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/gradient.png
 }
 
 function generate_poster() {

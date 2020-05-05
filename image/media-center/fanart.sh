@@ -39,7 +39,9 @@ function fanart_logo() {
   lp=$(bc <<< "$cw / 5")                                                                # logo proportion (1/5)
   lmp=$(bc <<< "$cw / 150")                                                             # logo margin proportion (3000/150=20)
   convert "$PRODIR/logos/$png" -resize $(($lp - $(($lmp * 2)) ))'x' $tmp/logo.png
-  fanart_rectangle $2
+  [[ "$2" != 1 ]] && convert $tmp/logo.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/logo.png
+  fanart_rectangle $3 $4
+  #fanart_rectangle $2
 }
 
 function fanart_rectangle() {
@@ -49,6 +51,7 @@ function fanart_rectangle() {
   lh=$(identify $tmp/logo.png | cut -d " " -f 3 | cut -d "x" -f 2)                      # logo height
   rmp=$(bc <<< "$lw / 56")                                                              # rectangle margin proportion (560/56=10)
   convert -size $(($lw + $rmp * 2))'x'$(($lh + $rmp * 2)) xc:$1 $tmp/rectangle.png
+  [[ "$2" != 1 ]] && convert $tmp/rectangle.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/rectangle.png
 }
 
 function generate_fanart() {
