@@ -14,7 +14,6 @@ function fanart_init() {
 
 function fanart_crop() {
   [ ! -f "$1" ] && echo "The input file don't exists" 1>&2 && return 1                  # input file
-
   iw=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 1)                               # input image width
   ih=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 2)                               # input image height
   mcd=$(bc <<< "$iw / $aw")                                                             # calculo de height por width (maximo comun divisor)
@@ -33,23 +32,21 @@ function fanart_crop() {
 function fanart_logo() {
   [ ! -z "$1" ] && png=$(ls $PRODIR/logos | grep -i "$1.png") ; [ $? != 0 ] && echo "The input logo don't exists" 1>&2 && return 1   # input logo
   [ ! -f "$tmp/crop.jpg" ] && echo "The input file don't exists" 1>&2 && return 1       # input file
-
   cw=$(identify $tmp/crop.jpg | cut -d " " -f 3 | cut -d "x" -f 1)                      # image crop width
   ch=$(identify $tmp/crop.jpg | cut -d " " -f 3 | cut -d "x" -f 2)                      # image crop height
-  lp=$(bc <<< "$cw / 6")                                                                # logo proportion (1/5)
-  lmp=$(bc <<< "$cw / 150")                                                             # logo margin proportion (3000/150=20)
-  convert "$PRODIR/logos/$png" -resize $(($lp - $(($lmp * 2)) ))'x' $tmp/logo.png
+  lp=$(bc <<< "$cw / 7")                                                                # logo proportion (1/7)
+  lmp=$(bc <<< "$lp / 20")
+  xlmp=$(bc <<< "$lmp / 2")
+  convert "$PRODIR/logos/$png" -resize $(($lp - $(($lmp * 2)) - $(($xlmp *2))))'x' $tmp/logo.png
   [[ "$2" != 1 ]] && convert $tmp/logo.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/logo.png
   fanart_rectangle $3 $4
 }
 
 function fanart_rectangle() {
   [ ! -f "$tmp/logo.png" ] && echo "The logo file don't exists" 1>&2 && return 1        # logo file
-
   lw=$(identify $tmp/logo.png | cut -d " " -f 3 | cut -d "x" -f 1)                      # logo width
   lh=$(identify $tmp/logo.png | cut -d " " -f 3 | cut -d "x" -f 2)                      # logo height
-  rmp=$(bc <<< "$lw / 56")                                                              # rectangle margin proportion (560/56=10)
-  convert -size $(($lw + $rmp * 2))'x'$(($lh + $rmp * 2)) xc:$1 $tmp/rectangle.png
+  convert -size $(($lw + $xlmp * 2))'x'$(($lh + $xlmp * 2)) xc:$1 $tmp/rectangle.png
   [[ "$2" != 1 ]] && convert $tmp/rectangle.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/rectangle.png
 }
 
@@ -70,8 +67,9 @@ function get_fanart() {
 }
 
 function fanart_compose() {
-  composite -geometry +$(($(($lp * 5)) + $lmp - $rmp))+$(($ch - $lh - $lmp - $rmp)) $tmp/rectangle.png $tmp/crop.jpg $tmp/compose.jpg
-  composite -geometry +$(($(($lp * 5)) + $lmp))+$(($ch - $lh - $lmp)) $tmp/logo.png $tmp/compose.jpg $1
+  rh=$(identify $tmp/rectangle.png | cut -d " " -f 3 | cut -d "x" -f 2)
+  composite -geometry +$(($(($lp * 6)) + $lmp))+$(($ch - $rh - $lmp)) $tmp/rectangle.png $tmp/crop.jpg $tmp/compose.jpg
+  composite -geometry +$(($(($lp * 6)) + $lmp + $xlmp))+$(($ch + $xlmp - $rh - $lmp)) $tmp/logo.png $tmp/compose.jpg $1
 }
 
 function fanart_out() {

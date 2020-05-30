@@ -14,7 +14,6 @@ function poster_init() {
 
 function poster_crop() {
   [ ! -f "$1" ] && echo "The input file don't exists" 1>&2 && return 1                  # input file
-
   iw=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 1)                               # input image width
   ih=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 2)                               # input image height
   mcd=$(bc <<< "$iw / $aw")                                                             # calculo de height por width (maximo comun divisor)
@@ -33,23 +32,22 @@ function poster_crop() {
 function poster_logo() {
   [ ! -z "$1" ] && png=$(ls $PRODIR/logos | grep -i "$1.png") ; [ $? != 0 ] && echo "The input logo don't exists" 1>&2 && return 1   # input logo
   [ ! -f "$tmp/crop.jpg" ] && echo "The input file don't exists" 1>&2 && return 1       # input file
-
   cw=$(identify $tmp/crop.jpg | cut -d " " -f 3 | cut -d "x" -f 1)                      # image crop width
   ch=$(identify $tmp/crop.jpg | cut -d " " -f 3 | cut -d "x" -f 2)                      # image crop height
-  lp=$(bc <<< "$cw / 1.043525571")                                                      # logo proportion (1918/1.043525571)
-  convert "$PRODIR/logos/$png" -resize $lp'x' $tmp/logo.png
+  lp=$(bc <<< "$cw / 4")                                                                # logo proportion (1/4)
+  lmp=$(bc <<< "$lp / 20")
+  xlmp=$(bc <<< "$lmp / 3")
+  convert "$PRODIR/logos/$png" -resize $(($lp - $(($lmp * 2)) - $(($xlmp *2))))'x' $tmp/logo.png
   [[ "$2" != 1 ]] && convert $tmp/logo.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/logo.png
-  poster_color $3 $4
+  poster_rectangle $3 $4
 }
 
-function poster_color() {
+function poster_rectangle() {
   [ ! -f "$tmp/logo.png" ] && echo "The logo file don't exists" 1>&2 && return 1        # logo file
-
   lw=$(identify $tmp/logo.png | cut -d " " -f 3 | cut -d "x" -f 1)                      # logo width
   lh=$(identify $tmp/logo.png | cut -d " " -f 3 | cut -d "x" -f 2)                      # logo height
-  gmp=$(bc <<< "$ch / 35.9625")                                                         # gradient margin bottom proportion (2877/35.9625=80)
-  convert -size $cw'x'$(($lh + $gmp)) gradient:"none"-$1 $tmp/gradient.png
-  [[ "$2" != 1 ]] && convert $tmp/gradient.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/gradient.png
+  convert -size $(($lw + $xlmp * 2))'x'$(($lh + $xlmp * 2)) xc:$1 $tmp/rectangle.png
+  [[ "$2" != 1 ]] && convert $tmp/rectangle.png -alpha on -channel a -evaluate multiply $2 +channel $tmp/rectangle.png
 }
 
 function generate_poster() {
@@ -64,16 +62,14 @@ function generate_poster() {
 }
 
 function get_poster() {
-  [[ -f "$tmp/crop.jpg" && -f "$tmp/logo.png" && -f "$tmp/gradient.png" ]] && poster_compose $1 && return 0
+  [[ -f "$tmp/crop.jpg" && -f "$tmp/logo.png" && -f "$tmp/rectangle.png" ]] && poster_compose $1 && return 0
   [ -f "$tmp/crop.jpg" ] && cp $tmp/crop.jpg $1 && return 0
 }
 
 function poster_compose() {
-  gw=$(identify $tmp/gradient.png | cut -d " " -f 3 | cut -d "x" -f 1)                  # gradient width
-  gh=$(identify $tmp/gradient.png | cut -d " " -f 3 | cut -d "x" -f 2)                  # gradient height
-  composite -geometry +0+$(($ch - $gh)) $tmp/gradient.png $tmp/crop.jpg -compose $t $tmp/compose.jpg
-  lm=$(bc <<<"$(($cw - $lp)) / 2")                                                      # left margin logo
-  composite -geometry +$lm+$(($ch - $gh)) $tmp/logo.png $tmp/compose.jpg $1
+  rh=$(identify $tmp/rectangle.png | cut -d " " -f 3 | cut -d "x" -f 2)
+  composite -geometry +$(($(($lp * 3)) + $lmp))+$(($ch - $rh - $lmp)) $tmp/rectangle.png $tmp/crop.jpg $tmp/compose.jpg
+  composite -geometry +$(($(($lp * 3)) + $lmp + $xlmp))+$(($ch + $xlmp - $rh - $lmp)) $tmp/logo.png $tmp/compose.jpg $1
 }
 
 function poster_out() {
