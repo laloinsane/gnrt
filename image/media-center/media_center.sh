@@ -30,8 +30,10 @@ function media_center_poster_init() {
 
 function media_center_crop() {
   [ ! -f "$1" ] && echo "The input file don't exists" 1>&2 && return 1                  # input file
-  iw=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 1)                               # input image width
-  ih=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 2)                               # input image height
+  cs=$(echo "$1" | tr -cd ' ' | wc -c)
+  csn=$(($cs+3))
+  iw=$(identify ./"$1" | cut -d " " -f $csn | cut -d "x" -f 1)                          # input image width
+  ih=$(identify ./"$1" | cut -d " " -f $csn | cut -d "x" -f 2)                          # input image height
   mcd=$(bc <<< "scale=4; $iw / $aw")                                                    # calculo de height por width (maximo comun divisor)
   h=$(bc <<< "scale=4; $ah * $mcd")                                                     # image cropped height
   henteroround=$(cut -d "." -f1 <<< $h)
@@ -42,7 +44,7 @@ function media_center_crop() {
     hnew=$henteroround
   fi
   if [ $hnew -eq $ih ]; then
-    cp $1 $tmp/crop.jpg
+    cp "$1" $tmp/crop.jpg
   else
     if [ $hnew -gt $ih ]; then
       mcd=$(bc <<< "scale=4; $ih / $ah")                                                # calculo de width por height (maximo comun divisor)
@@ -55,14 +57,14 @@ function media_center_crop() {
         wnew=$wenteroround
       fi
       if [ $wnew -eq $iw ]; then
-        cp $1 $tmp/crop.jpg
+        cp "$1" $tmp/crop.jpg
       else
         ic=$(bc <<< "$(($iw - $wnew)) / 2")                                                    # original image center
-        convert $1 -crop $wnew'x'$ih+$ic+0 $tmp/crop.jpg
+        convert "$1" -crop $wnew'x'$ih+$ic+0 $tmp/crop.jpg
       fi
     else
       ic=$(bc <<< "$(($ih - $hnew)) / 2")                                                    # original image center
-      convert $1 -crop $iw'x'$hnew+0+$ic $tmp/crop.jpg
+      convert "$1" -crop $iw'x'$hnew+0+$ic $tmp/crop.jpg
     fi
   fi
 }
@@ -90,24 +92,24 @@ function media_center_rectangle() {
 
 function generate_media_center() {
   [ -f "$1" ] && while true; do                                                         # output file
-    read -p "The file $1 already exists, Do you want to overwrite it? [Y/N] " answer
+    read -p "The file \"$1\" already exists, Do you want to overwrite it? [Y/N] " answer
     case $answer in
-      [Yy]*) get_media_center $1 ; break ;;
+      [Yy]*) get_media_center "$1" ; break ;;
       [Nn]*) media_center_out ; exit ;;
       *) echo "Please answer yes or no." ;;
     esac
-  done || get_media_center $1
+  done || get_media_center "$1"
 }
 
 function get_media_center() {
-  [[ -f "$tmp/crop.jpg" && -f "$tmp/logo.png" && -f "$tmp/rectangle.png" ]] && media_center_compose $1 && return 0
-  [ -f "$tmp/crop.jpg" ] && cp $tmp/crop.jpg $1 && return 0
+  [[ -f "$tmp/crop.jpg" && -f "$tmp/logo.png" && -f "$tmp/rectangle.png" ]] && media_center_compose "$1" && return 0
+  [ -f "$tmp/crop.jpg" ] && cp $tmp/crop.jpg "$1" && return 0
 }
 
 function media_center_compose() {
   rh=$(identify $tmp/rectangle.png | cut -d " " -f 3 | cut -d "x" -f 2)
   composite -geometry +$(($(($lp * $(($proportion1-1)))) + $lmp))+$(($ch - $rh - $lmp)) $tmp/rectangle.png $tmp/crop.jpg $tmp/compose.jpg
-  composite -geometry +$(($(($lp * $(($proportion1-1)))) + $lmp + $xlmp))+$(($ch + $xlmp - $rh - $lmp)) $tmp/logo.png $tmp/compose.jpg $1
+  composite -geometry +$(($(($lp * $(($proportion1-1)))) + $lmp + $xlmp))+$(($ch + $xlmp - $rh - $lmp)) $tmp/logo.png $tmp/compose.jpg "$1"
 }
 
 function media_center_out() {
