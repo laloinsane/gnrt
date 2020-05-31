@@ -32,16 +32,38 @@ function media_center_crop() {
   [ ! -f "$1" ] && echo "The input file don't exists" 1>&2 && return 1                  # input file
   iw=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 1)                               # input image width
   ih=$(identify ./$1 | cut -d " " -f 3 | cut -d "x" -f 2)                               # input image height
-  mcd=$(bc <<< "$iw / $aw")                                                             # calculo de height por width (maximo comun divisor)
-  h=$(($ah * $mcd))                                                                     # image cropped height
-  if [ $h -gt $ih ]; then
-    mcd=$(bc <<< "$ih / $ah")                                                           # calculo de width por height (maximo comun divisor)
-    w=$(($aw * $mcd))                                                                   # image cropped width
-    ic=$(bc <<< "$(($iw - $w)) / 2")                                                    # original image center
-    convert $1 -crop $w'x'$ih+$ic+0 $tmp/crop.jpg
+  mcd=$(bc <<< "scale=4; $iw / $aw")                                                    # calculo de height por width (maximo comun divisor)
+  h=$(bc <<< "scale=4; $ah * $mcd")                                                     # image cropped height
+  henteroround=$(cut -d "." -f1 <<< $h)
+  hdecimalround=$(cut -d "." -f2 <<< $h)
+  if [ $hdecimalround -gt 5000 ]; then
+    hnew=$(($henteroround+1))
   else
-    ic=$(bc <<< "$(($ih - $h)) / 2")                                                    # original image center
-    convert $1 -crop $iw'x'$h+0+$ic $tmp/crop.jpg
+    hnew=$henteroround
+  fi
+  if [ $hnew -eq $ih ]; then
+    cp $1 $tmp/crop.jpg
+  else
+    if [ $hnew -gt $ih ]; then
+      mcd=$(bc <<< "scale=4; $ih / $ah")                                                # calculo de width por height (maximo comun divisor)
+      w=$(bc <<< "scale=4; $aw * $mcd")                                                 # image cropped width
+      wenteroround=$(cut -d "." -f1 <<< $w)
+      wdecimalround=$(cut -d "." -f2 <<< $w)
+      if [ $wdecimalround -gt 5000 ]; then
+        wnew=$(($wenteroround+1))
+      else
+        wnew=$wenteroround
+      fi
+      if [ $wnew -eq $iw ]; then
+        cp $1 $tmp/crop.jpg
+      else
+        ic=$(bc <<< "$(($iw - $wnew)) / 2")                                                    # original image center
+        convert $1 -crop $wnew'x'$ih+$ic+0 $tmp/crop.jpg
+      fi
+    else
+      ic=$(bc <<< "$(($ih - $hnew)) / 2")                                                    # original image center
+      convert $1 -crop $iw'x'$hnew+0+$ic $tmp/crop.jpg
+    fi
   fi
 }
 
@@ -50,7 +72,7 @@ function media_center_logo() {
   [ ! -f "$tmp/crop.jpg" ] && echo "The input file don't exists" 1>&2 && return 1       # input file
   cw=$(identify $tmp/crop.jpg | cut -d " " -f 3 | cut -d "x" -f 1)                      # image crop width
   ch=$(identify $tmp/crop.jpg | cut -d " " -f 3 | cut -d "x" -f 2)                      # image crop height
-  lp=$(bc <<< "$cw / $proportion1")                                                                # logo proportion (1/4)
+  lp=$(bc <<< "$cw / $proportion1")                                                     # logo proportion (1/4)
   lmp=$(bc <<< "$lp / 20")
   xlmp=$(bc <<< "$lmp / $proportion2")
   convert "$PRODIR/logos/$png" -resize $(($lp - $(($lmp * 2)) - $(($xlmp *2))))'x' $tmp/logo.png
