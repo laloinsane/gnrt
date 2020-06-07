@@ -2,13 +2,19 @@
 
 FILE=$0
 PRODIR=`dirname $FILE`
-# utils
-source "$PRODIR/utils/usage.sh"
 # text
 source "$PRODIR/text/nfo/movie.sh"
 source "$PRODIR/text/desktop/desktop.sh"
 # image
 source "$PRODIR/image/media-center/media_center.sh"
+
+function usage() {
+  echo "Usage: gnrt --movie-nfo [-o \"outfile\"]
+            --desktop [-o \"outfile\"]
+            --poster [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
+            --fanart [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
+            [-h | --help]"
+}
 
 [ -z "$1" ] && usage 1>&2 && exit 1
 
