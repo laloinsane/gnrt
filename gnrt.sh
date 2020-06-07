@@ -2,24 +2,31 @@
 
 FILE=$0
 PRODIR=`dirname $FILE`
-# utils
-source "$PRODIR/utils/usage.sh"
 # text
 source "$PRODIR/text/nfo/movie.sh"
 source "$PRODIR/text/desktop/desktop.sh"
 # image
 source "$PRODIR/image/media-center/media_center.sh"
 
+function usage() {
+  echo "USAGE: gnrt --movie-nfo [-o \"outfile\"]
+            --desktop [-o \"outfile\"]
+            --poster [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
+            --fanart [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
+            [-h | --help]"
+}
+
 [ -z "$1" ] && usage 1>&2 && exit 1
 
 while [ -n "$1" ]; do case "$1" in
   # text
   --movie-nfo) [[ -z "$2" || $(echo -n "$2" | wc -c) != 2 || "$2" != -* ]] && echo "Missing arguments in \"--movie-nfo\"" 1>&2 && exit 1 || while [[ -n "$2" && $(echo -n "$2" | wc -c) == 2 ]]; do case "$2" in
-     -o|--output) [[ -z "$3" || "$3" == -* ]] && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_movie_nfo "$3" ; shift ;;
+     -o) [[ -z "$3" || "$3" == -* ]] && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_movie_nfo "$3" ; shift ;;
      -*|*) echo "Option \"$2\" not recognized in \"--movie-nfo\"" 1>&2 && exit 1 ;;
   esac ;  shift ; done ;;
-  --desktop) [[ -z "$2" || $(echo -n "$2" | wc -c) != 2 || "$2" != -* ]] && echo "Missing arguments in \"--desktop\"" 1>&2 && exit 1 || while [[ -n "$2" && $(echo -n "$2" | wc -c) == 2 ]]; do case "$2" in
-     -o|--output) [[ -z "$3" || "$3" == -* ]] && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_desktop_file "$3" ; shift ;;
+  --desktop) [[ -z "$2" || $(echo -n "$2" | wc -c) != 2 || "$2" != -* ]] && echo "Missing arguments in \"--desktopp\"" 1>&2 && exit 1 || while [[ -n "$2" && $(echo -n "$2" | wc -c) == 2 ]]; do case "$2" in
+     -h) cat "$PRODIR/text/desktop/help" ; exit 0 ;;
+     -o) [[ -z "$3" || "$3" == -* ]] && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_desktop_file "$3" ; shift ;;
      -*|*) echo "Option \"$2\" not recognized in \"--desktop\"" 1>&2 && exit 1 ;;
   esac ;  shift ; done ;;
   # image
@@ -79,7 +86,6 @@ while [ -n "$1" ]; do case "$1" in
      -o) [[ -z "$3" || "$3" == -* ]] && media_center_out && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_media_center "$3" ; shift ;;
      -*|*) media_center_out && echo "Option \"$2\" not recognized in \"--fanart\"" 1>&2 && exit 1 ;;
   esac ;  shift ; done && media_center_out ;;
-  # utils
   -h|--help) usage && exit 0 ;;
   -*|*) echo "Option \"$1\" not recognized" 1>&2 && exit 1 ;;
 esac ; shift ; done

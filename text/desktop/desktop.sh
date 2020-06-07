@@ -1,18 +1,27 @@
 #!/bin/bash
 
 function generate_desktop_file() {
-  [ -f "$1" ] && while true; do
+  output=$1
+  if [ $(echo -n "$output" | wc -m) -gt 8 ]; then
+    echo "$output" | grep -i ".desktop" 1>/dev/null
+    if [ $? != 0 ]; then
+      output=$output".desktop"
+    fi
+  else
+    output=$output".desktop"
+  fi
+  [ -f "$output" ] && while true; do
     read -p "The file \"$1\" already exists, Do you want to overwrite it? [Y/N] " answer
     case $answer in
-      [Yy]*) desktop_manual_version "$1" ; break ;;
+      [Yy]*) desktop_manual_version "$output" ; break ;;
       [Nn]*) exit ;;
       *) echo "Please answer yes or no." ;;
     esac
-  done || desktop_manual_version "$1"
+  done || desktop_manual_version "$output"
 }
 
 function desktop_manual_version() {
-  desktop_file="$1"
+  desktop_file="$output"
   echo 'COMPLETE THE INFORMATION'
   printf '\n'
   read -p 'Version : ' version
