@@ -1,0 +1,28 @@
+USAGE: gnrt --desktop [-o \"outfile\"]
+
+NOTE:
+  Path of file .desktop: /usr/share/applications/application.desktop
+  Path of application: /usr/bin/application
+  Path of application icon: /opt/application/icon.png
+
+
+EXAMPLE:
+  FILE NAME: "godot.desktop"
+
+  FILE CONTENT:
+    [Desktop Entry]
+    Version=3.2.1
+    Name=Godot Engine
+    GenericName=Game Engine
+
+    Exec=Godot_v3.2.1-stable_x11.64
+    Terminal=false
+    Icon=/opt/Godot/icon.png
+    Type=Application
+    Categories=GameEngine;Development
+    X-Ayatana-Desktop-Shortcuts=NewWindow
+
+    [NewWindow Shortcut Group]
+    Name=New Window
+    Exec=Godot_v3.2.1-stable_x11.64 -n
+    TargetEnvironment=Unity
