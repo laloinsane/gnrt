@@ -9,7 +9,7 @@ source "$PRODIR/text/desktop/desktop.sh"
 source "$PRODIR/image/media-center/media_center.sh"
 
 function usage() {
-  echo "Usage: gnrt --movie-nfo [-o \"outfile\"]
+  echo "USAGE: gnrt --movie-nfo [-o \"outfile\"]
             --desktop [-o \"outfile\"]
             --poster [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
             --fanart [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
@@ -86,7 +86,6 @@ while [ -n "$1" ]; do case "$1" in
      -o) [[ -z "$3" || "$3" == -* ]] && media_center_out && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_media_center "$3" ; shift ;;
      -*|*) media_center_out && echo "Option \"$2\" not recognized in \"--fanart\"" 1>&2 && exit 1 ;;
   esac ;  shift ; done && media_center_out ;;
-  # utils
   -h|--help) usage && exit 0 ;;
   -*|*) echo "Option \"$1\" not recognized" 1>&2 && exit 1 ;;
 esac ; shift ; done

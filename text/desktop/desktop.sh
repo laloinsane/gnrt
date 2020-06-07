@@ -1,14 +1,14 @@
 #!/bin/bash
 
 function generate_desktop_file() {
-  output=""
-  if [ $(echo -n "$1" | wc -m) -gt 8 ]; then
-    echo "$1" | grep -i ".desktop"
+  output=$1
+  if [ $(echo -n "$output" | wc -m) -gt 8 ]; then
+    echo "$output" | grep -i ".desktop" 1>/dev/null
     if [ $? != 0 ]; then
-      output=$1".desktop"
+      output=$output".desktop"
     fi
   else
-    output=$1".desktop"
+    output=$output".desktop"
   fi
   [ -f "$output" ] && while true; do
     read -p "The file \"$1\" already exists, Do you want to overwrite it? [Y/N] " answer
