@@ -5,6 +5,7 @@ PRODIR=`dirname $FILE`
 # text
 source "$PRODIR/text/nfo/movie.sh"
 source "$PRODIR/text/desktop/desktop.sh"
+source "$PRODIR/text/readme/readme.sh"
 # image
 source "$PRODIR/image/media-center/media_center.sh"
 
@@ -24,10 +25,15 @@ while [ -n "$1" ]; do case "$1" in
      -o) [[ -z "$3" || "$3" == -* ]] && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_movie_nfo "$3" ; shift ;;
      -*|*) echo "Option \"$2\" not recognized in \"--movie-nfo\"" 1>&2 && exit 1 ;;
   esac ;  shift ; done ;;
-  --desktop) [[ -z "$2" || $(echo -n "$2" | wc -c) != 2 || "$2" != -* ]] && echo "Missing arguments in \"--desktopp\"" 1>&2 && exit 1 || while [[ -n "$2" && $(echo -n "$2" | wc -c) == 2 ]]; do case "$2" in
+  --desktop) [[ -z "$2" || $(echo -n "$2" | wc -c) != 2 || "$2" != -* ]] && echo "Missing arguments in \"--desktop\"" 1>&2 && exit 1 || while [[ -n "$2" && $(echo -n "$2" | wc -c) == 2 ]]; do case "$2" in
      -h) cat "$PRODIR/text/desktop/help" ; exit 0 ;;
      -o) [[ -z "$3" || "$3" == -* ]] && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_desktop_file "$3" ; shift ;;
      -*|*) echo "Option \"$2\" not recognized in \"--desktop\"" 1>&2 && exit 1 ;;
+  esac ;  shift ; done ;;
+  --readme) [[ -z "$2" || $(echo -n "$2" | wc -c) != 2 || "$2" != -* ]] && echo "Missing arguments in \"--readme\"" 1>&2 && exit 1 || while [[ -n "$2" && $(echo -n "$2" | wc -c) == 2 ]]; do case "$2" in
+     -h) cat "$PRODIR/text/readme/help" ; exit 0 ;;
+     -o) [[ -z "$3" || "$3" == -* ]] && echo "Missing arguments in \"$2\"" 1>&2 && exit 1 || generate_readme_file "$3" ; shift ;;
+     -*|*) echo "Option \"$2\" not recognized in \"--readme\"" 1>&2 && exit 1 ;;
   esac ;  shift ; done ;;
   # image
   --poster) [[ -z "$2" || $(echo -n "$2" | wc -c) != 2 || "$2" != -* ]] && echo "Missing arguments in \"$1\"" 1>&2 && exit 1 || media_center_poster_init && while [[ -n "$2" && ($(echo -n "$2" | wc -c) == 2) && "$2" == -* ]]; do case "$2" in
