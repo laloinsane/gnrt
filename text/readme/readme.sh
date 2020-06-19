@@ -24,12 +24,27 @@ function readme_manual_version() {
   readme_file="$output"
   echo 'COMPLETE THE INFORMATION'
   printf '\n'
+
   read -p 'Title : ' title
-  read -p 'Description : ' description
+
+  echo 'Description : to write line breaks use "|"'
+  IFS='|' read -a description
+  for index in ${!description[*]}; do
+    [ $index == 0 ] && description_tag=$(cat << EOF
+${description[index]}
+EOF
+) || description_tag=$description_tag$(cat << EOF
+
+
+${description[index]}
+EOF
+)
+  done ;
+
   while true; do
     read -p "Add Status to README file? [Y/N] " answer
     case $answer in
-      [Yy]*) echo 'Status : Insert the status separated by commas (Network,WebBrowser)'
+      [Yy]*) echo 'Status : Insert the status separated by commas ([![npm version](url)](url),[![Gem version](url)](url))'
         IFS=',' read -a status
         for index in ${!status[*]}; do
           [ $index == 0 ] && status_tag=$(cat << EOF
@@ -49,10 +64,11 @@ EOF
       *) echo "Please answer yes or no." ;;
     esac
   done
+
   while true; do
-    read -p "Add Pre-requisitos to README file? [Y/N] " answer
+    read -p "Add Requirements to README file? [Y/N] " answer
     case $answer in
-      [Yy]*) echo 'Pre-requisitos : Insert the status separated by commas (Network,WebBrowser)'
+      [Yy]*) echo 'Requirements : Insert the requirements separated by commas (Network,WebBrowser)'
         IFS=',' read -a pre_requisitos
         for index in ${!pre_requisitos[*]}; do
           [ $index == 0 ] && pre_requisitos_tag=$(cat << EOF
@@ -63,6 +79,7 @@ EOF
 - ${pre_requisitos[index]}
 EOF
 ) || pre_requisitos_tag=$pre_requisitos_tag$(cat << EOF
+
 - ${pre_requisitos[index]}
 EOF
 )
@@ -71,6 +88,7 @@ EOF
       *) echo "Please answer yes or no." ;;
     esac
   done
+
   while true; do
     read -p "Add Instalation to README file? [Y/N] " answer
     case $answer in
@@ -85,6 +103,7 @@ EOF
 - ${instalation[index]}
 EOF
 ) || instalation_tag=$instalation_tag$(cat << EOF
+
 - ${instalation[index]}
 EOF
 )
@@ -93,11 +112,12 @@ EOF
       *) echo "Please answer yes or no." ;;
     esac
   done
+
   while true; do
     read -p "Add Privacy Policy to README file? [Y/N] " answer
     case $answer in
-      [Yy]*) echo 'Privacy Policy : Insert the status separated by commas (Network,WebBrowser)'
-        IFS=',' read -a privacy_policy
+      [Yy]*) echo 'Privacy Policy : to write line breaks use "|"'
+        IFS='|' read -a privacy_policy
         for index in ${!privacy_policy[*]}; do
           [ $index == 0 ] && privacy_policy_tag=$(cat << EOF
 
@@ -107,7 +127,9 @@ EOF
 ${privacy_policy[index]}
 EOF
 ) || privacy_policy_tag=$privacy_policy_tag$(cat << EOF
-;${privacy_policy[index]}
+
+
+${privacy_policy[index]}
 EOF
 )
         done ; break ;;
@@ -121,7 +143,7 @@ EOF
   cat > "$readme_file" << EOF
 # $title
 
-$description$status_tag$pre_requisitos_tag$instalation_tag$privacy_policy_tag
+$description_tag$status_tag$pre_requisitos_tag$instalation_tag$privacy_policy_tag
 EOF
 
   [ -s "$readme_file" ] && echo "\"$readme_file\" created successfully." && exit 0 || echo "Error!! occurred during file creation of \"$readme_file\"." 1>&2 && exit 1
