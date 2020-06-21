@@ -50,8 +50,6 @@ EOF
           [ $index == 0 ] && status_tag=$(cat << EOF
 
 
-## Status
-
 ${status[index]}
 EOF
 ) || status_tag=$status_tag$(cat << EOF
@@ -60,6 +58,35 @@ ${status[index]}
 EOF
 )
         done ; break ;;
+      [Nn]*) break ;;
+      *) echo "Please answer yes or no." ;;
+    esac
+  done
+
+  while true; do
+    read -p "Add Available On to README file? [Y/N] " answer
+    case $answer in
+      [Yy]*) echo 'Available On : Insert the Available On separated by commas (<a href="" target="_blank"><img src="" alt="" width=""></a>,<a href="" target="_blank"><img src="" alt="" width=""></a>)'
+        IFS=',' read -a available
+        for index in ${!available[*]}; do
+          [ $index == 0 ] && available_tag=$(cat << EOF
+
+
+<p align="left">
+  ${available[index]}
+EOF
+) || available_tag=$available_tag$(cat << EOF
+
+  ${available[index]}
+EOF
+)
+        done ;
+        available_tag=$available_tag$(cat << EOF
+
+</p>
+EOF
+)
+        break ;;
       [Nn]*) break ;;
       *) echo "Please answer yes or no." ;;
     esac
@@ -143,7 +170,7 @@ EOF
   cat > "$readme_file" << EOF
 # $title
 
-$description_tag$status_tag$pre_requisitos_tag$instalation_tag$privacy_policy_tag
+$description_tag$status_tag$available_tag$pre_requisitos_tag$instalation_tag$privacy_policy_tag
 EOF
 
   [ -s "$readme_file" ] && echo "\"$readme_file\" created successfully." && exit 0 || echo "Error!! occurred during file creation of \"$readme_file\"." 1>&2 && exit 1
