@@ -93,30 +93,6 @@ EOF
   done
 
   while true; do
-    read -p "Add Requirements to README file? [Y/N] " answer
-    case $answer in
-      [Yy]*) echo 'Requirements : Insert the requirements separated by commas (Network,WebBrowser)'
-        IFS=',' read -a pre_requisitos
-        for index in ${!pre_requisitos[*]}; do
-          [ $index == 0 ] && pre_requisitos_tag=$(cat << EOF
-
-
-## Requisitos
-
-- ${pre_requisitos[index]}
-EOF
-) || pre_requisitos_tag=$pre_requisitos_tag$(cat << EOF
-
-- ${pre_requisitos[index]}
-EOF
-)
-        done ; break ;;
-      [Nn]*) break ;;
-      *) echo "Please answer yes or no." ;;
-    esac
-  done
-
-  while true; do
     read -p "Add Instalation to README file? [Y/N] " answer
     case $answer in
       [Yy]*) echo 'Instalation : Insert the status separated by commas (Network,WebBrowser)'
@@ -170,7 +146,7 @@ EOF
   cat > "$readme_file" << EOF
 # $title
 
-$description_tag$status_tag$available_tag$pre_requisitos_tag$instalation_tag$privacy_policy_tag
+$description_tag$status_tag$available_tag$instalation_tag$privacy_policy_tag
 EOF
 
   [ -s "$readme_file" ] && echo "\"$readme_file\" created successfully." && exit 0 || echo "Error!! occurred during file creation of \"$readme_file\"." 1>&2 && exit 1

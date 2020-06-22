@@ -5,7 +5,6 @@ PRODIR=`dirname $FILE`
 # text
 source "$PRODIR/text/nfo/movie.sh"
 source "$PRODIR/text/desktop/desktop.sh"
-
 source "$PRODIR/text/readme/readme.sh"
 # image
 source "$PRODIR/image/media-center/media_center.sh"
@@ -15,6 +14,8 @@ function usage() {
             --movie-nfo -h
             --desktop [-o \"outfile\"]
             --desktop -h
+            --readme [-o \"outfile\"]
+            --readme -h
             --poster [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
             --poster -h
             --fanart [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
