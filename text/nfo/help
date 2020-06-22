@@ -1,0 +1,53 @@
+USAGE: gnrt --movie-nfo [-o \"outfile\"]
+
+NOTE:
+
+
+EXAMPLE:
+  FILE NAME: "Justice League.nfo"
+
+  FILE CONTENT:
+    <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+    <movie>
+        <title>Justice League</title>
+        <originaltitle>Justice League</originaltitle>
+        <userrating>0</userrating>
+        <outline>Fueled by his restored faith in humanity and inspired by Superman&apos;s selfless act, Bruce Wayne enlists the help of his newfound ally, Diana Prince, to face an even greater enemy.</outline>
+        <plot>Fueled by his restored faith in humanity and inspired by Superman&apos;s selfless act, Bruce Wayne enlists the help of his newfound ally, Diana Prince, to face an even greater enemy. Together, Batman and Wonder Woman work quickly to find and recruit a team of meta-humans to stand against this newly awakened threat. But despite the formation of this unprecedented league of heroes-Batman, Wonder Woman, Aquaman, Cyborg and The Flash-it may already be too late to save the planet from an assault of catastrophic proportions.</plot>
+        <tagline></tagline>
+        <genre>Action</genre>
+        <genre>Adventure</genre>
+        <genre>Fantasy</genre>
+        <genre>Sci-Fi</genre>
+        <country>USA</country>
+        <country>Canada</country>
+        <country>UK</country>
+        <director>Zack Snyder</director>
+        <premiered>2017-11-15</premiered>
+        <year>2017</year>
+        <studio>DC Comics</studio>
+        <actor>
+            <name>Ben Affleck</name>
+            <role></role>
+            <order></order>
+            <thumb></thumb>
+        </actor>
+        <actor>
+            <name>Henry Cavill</name>
+            <role></role>
+            <order></order>
+            <thumb></thumb>
+        </actor>
+        <actor>
+            <name>Amy Adams</name>
+            <role></role>
+            <order></order>
+            <thumb></thumb>
+        </actor>
+        <actor>
+            <name>Gal Gadot</name>
+            <role></role>
+            <order></order>
+            <thumb></thumb>
+        </actor>
+    </movie>
