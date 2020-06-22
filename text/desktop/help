@@ -1,4 +1,5 @@
 USAGE: gnrt --desktop [-o \"outfile\"]
+       gnrt --desktop -h
 
 NOTE:
   Path of file .desktop: /usr/share/applications/application.desktop

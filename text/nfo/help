@@ -1,4 +1,5 @@
 USAGE: gnrt --movie-nfo [-o \"outfile\"]
+       gnrt --movie-nfo -h
 
 NOTE:
 

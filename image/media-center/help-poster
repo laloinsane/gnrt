@@ -1,0 +1,4 @@
+USAGE: gnrt --poster [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
+       gnrt --poster -h
+
+NOTE:

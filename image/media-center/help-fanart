@@ -1,0 +1,4 @@
+USAGE: gnrt --fanart [-i \"infile\"] [-l logoname <-t>] [-c color <-t>] [-o \"outfile\"]
+       gnrt --fanart -h
+
+NOTE:
