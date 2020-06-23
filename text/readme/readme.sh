@@ -44,7 +44,7 @@ EOF
   while true; do
     read -p "Add Status to README file? [Y/N] " answer
     case $answer in
-      [Yy]*) echo 'Status : Insert the status separated by commas ([![npm version](url)](url),[![Gem version](url)](url))'
+      [Yy]*) echo 'Status : Insert the status separated by commas (![name](badge-url),[![name](badge-url)](software-url))'
         IFS=',' read -a status
         for index in ${!status[*]}; do
           [ $index == 0 ] && status_tag=$(cat << EOF
@@ -141,12 +141,38 @@ EOF
     esac
   done
 
+  while true; do
+    read -p "Add More Inforamation Links to README file? [Y/N] " answer
+    case $answer in
+      [Yy]*) echo 'More Information Links : Insert the more information links separated by commas ([name](url),[name](url))'
+        IFS=',' read -a more_information
+        for index in ${!more_information[*]}; do
+          [ $index == 0 ] && more_information_tag=$(cat << EOF
+
+
+## Más Información
+
+Obtén más información del repositorio en los siguientes enlaces.
+
+- ${more_information[index]}
+EOF
+) || more_information_tag=$more_information_tag$(cat << EOF
+
+- ${more_information[index]}
+EOF
+)
+        done ; break ;;
+      [Nn]*) break ;;
+      *) echo "Please answer yes or no." ;;
+    esac
+  done
+
   [ ! -f "$readme_file" ] && touch "$readme_file"
 
   cat > "$readme_file" << EOF
 # $title
 
-$description_tag$status_tag$available_tag$instalation_tag$privacy_policy_tag
+$description_tag$status_tag$available_tag$instalation_tag$privacy_policy_tag$more_information_tag
 EOF
 
   [ -s "$readme_file" ] && echo "\"$readme_file\" created successfully." && exit 0 || echo "Error!! occurred during file creation of \"$readme_file\"." 1>&2 && exit 1
