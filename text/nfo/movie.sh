@@ -1,18 +1,27 @@
 #!/bin/bash
 
 function generate_movie_nfo() {
-  [ -f "$1" ] && while true; do
+  output=$1
+  if [ $(echo -n "$output" | wc -m) -gt 4 ]; then
+    echo "$output" | grep -i ".nfo" 1>/dev/null
+    if [ $? != 0 ]; then
+      output=$output".nfo"
+    fi
+  else
+    output=$output".nfo"
+  fi
+  [ -f "$output" ] && while true; do
     read -p "The file \"$1\" already exists, Do you want to overwrite it? [Y/N] " answer
     case $answer in
-      [Yy]*) movie_nfo_manual_version "$1" ; break ;;
+      [Yy]*) movie_nfo_manual_version "$output" ; break ;;
       [Nn]*) exit ;;
       *) echo "Please answer yes or no." ;;
     esac
-  done || movie_nfo_manual_version "$1"
+  done || movie_nfo_manual_version "$output"
 }
 
 function movie_nfo_manual_version() {
-  movie_file="$1"
+  movie_file="$output"
   echo 'COMPLETE THE INFORMATION'
   printf '\n'
   read -p 'Title : ' title
@@ -30,7 +39,19 @@ EOF
 EOF
 )
   done
-  read -p 'Country : ' country
+  echo 'Countries : Insert the countries separated by commas (USA,Canada,UK)'
+  IFS=',' read -a countries
+  for index in ${!countries[*]}; do
+    [ $index == 0 ] && countries_tag=$(cat << EOF
+
+  <country>${countries[index]}</country>
+EOF
+) || countries_tag=$countries_tag$(cat << EOF
+
+  <country>${countries[index]}</country>
+EOF
+)
+  done
   read -p 'Director : ' director
   read -p 'Release : ' release
   read -p 'Studio : ' studio
@@ -70,8 +91,7 @@ EOF
   <userrating>0</userrating>
   <outline>$outline</outline>
   <plot>$description</plot>
-  <tagline></tagline>$genre_tag
-  <country>$country</country>
+  <tagline></tagline>$genre_tag$countries_tag
   <director>$director</director>
   <premiered>$release</premiered>
   <year>$year</year>
